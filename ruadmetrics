@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Read Metrics Pilot Experiment</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; background: #f5f5f5; }
+  #container { max-width: 800px; margin: 50px auto; padding: 20px; background: white; border-radius: 10px; }
+  img { max-width: 100%; margin-bottom: 20px; }
+  .slider { width: 100%; margin: 10px 0; }
+  button { padding: 10px 20px; margin: 20px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div id="container">
+  <div id="consent">
+    <h2>Consent Form</h2>
+    <p>Please read and agree to participate. Webcam will be used to record facial expressions. Data is anonymous and used only for research purposes.</p>
+    <button onclick="startExperiment()">I Consent</button>
+  </div>
+
+  <div id="experiment" style="display:none;">
+    <h2 id="pageTitle">Page 1</h2>
+    <img id="pageContent" src="graphic1.jpg" alt="Page Image">
+
+    <p>Immersion (0-10):</p>
+    <input type="range" min="0" max="10" value="5" class="slider" id="immersionSlider">
+
+    <p>Affect (0-10):</p>
+    <input type="range" min="0" max="10" value="5" class="slider" id="affectSlider">
+
+    <button onclick="nextPage()">Next</button>
+  </div>
+
+  <div id="thankyou" style="display:none;">
+    <h2>Thank You!</h2>
+    <p>Your participation is complete.</p>
+  </div>
+</div>
+
+<script>
+// Experiment data
+let pages = ["graphic1.jpg", "graphic2.jpg", "novel1.html"]; // replace with your files
+let currentPage = 0;
+let startTime = 0;
+
+function startExperiment() {
+  document.getElementById("consent").style.display = "none";
+  document.getElementById("experiment").style.display = "block";
+  startTime = Date.now();
+  initCamera(); // start webcam placeholder
+}
+
+function nextPage() {
+  let endTime = Date.now();
+  let timeSpent = (endTime - startTime)/1000; // seconds
+  let immersion = document.getElementById("immersionSlider").value;
+  let affect = document.getElementById("affectSlider").value;
+
+  // Save data (placeholder: console log, later push to database or CSV)
+  console.log({
+    page: currentPage+1,
+    timeSpent: timeSpent,
+    immersion: immersion,
+    affect: affect
+  });
+
+  currentPage++;
+  if(currentPage < pages.length){
+    document.getElementById("pageContent").src = pages[currentPage];
+    document.getElementById("pageTitle").innerText = "Page " + (currentPage+1);
+    startTime = Date.now();
+  } else {
+    document.getElementById("experiment").style.display = "none";
+    document.getElementById("thankyou").style.display = "block";
+  }
+}
+
+// Webcam placeholder
+async function initCamera() {
+  const video = document.createElement('video');
+  video.autoplay = true;
+  video.style.display = 'none';
+  document.body.appendChild(video);
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+    console.log("Webcam initialized (placeholder)");
+  } catch(err) {
+    alert("Camera access is required to run this experiment.");
+  }
+}
+</script>
+
+</body>
+</html>
